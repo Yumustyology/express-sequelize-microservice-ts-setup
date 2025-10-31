@@ -23,7 +23,7 @@
     "migrate:posts": "npm run migrate --workspace=posts-service",
     "migrate:undo:users": "npm run migrate:undo --workspace=users-service",
     "migrate:undo:posts": "npm run migrate:undo --workspace=posts-service",
-     "lint": "eslint . --ext .ts",
+    "lint": "eslint . --ext .ts",
     "prettier": "prettier --write .",
     "test": "jest --passWithNoTests"
   },
