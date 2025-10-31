@@ -1,0 +1,50 @@
+{
+  "name": "users-service",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "migrate": "sequelize db:migrate --config src/config/sequelize-config.cjs --migrations-path src/migrations",
+    "migrate:undo": "sequelize db:migrate:undo --config src/config/sequelize-config.cjs --migrations-path src/migrations",
+    "migrate:undo:all": "sequelize db:migrate:undo:all --config src/config/sequelize-config.cjs --migrations-path src/migrations",
+    "migration:new": "node src/scripts/create-migration.cjs",
+    "seed": "sequelize db:seed:all",
+    "seed:undo:all": "sequelize db:seed:undo:all",
+    "db:reset": "npm run migrate:undo:all && npm run migrate && npm run seed"
+  },
+  "dependencies": {
+    "@app/shared": "*",
+    "amqplib": "^0.10.9",
+    "axios": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "joi": "^18.0.1",
+    "morgan": "^1.10.1",
+    "mysql2": "^3.15.3",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.18.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.8",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.4",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.19.23",
+    "@types/swagger-ui-express": "^4.1.8",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

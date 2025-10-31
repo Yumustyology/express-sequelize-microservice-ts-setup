@@ -1,0 +1,93 @@
+version: '3.9'
+
+services:
+  # API Gateway
+  api-gateway:
+    build:
+      context: ..
+      dockerfile: ./services/api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./api-gateway/.env
+    depends_on:
+      - users-service
+      - posts-service
+    restart: always
+
+  # Users Service
+  users-service:
+    build:
+      context: ..
+      dockerfile: ./services/users-service/Dockerfile
+    container_name: users-service
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./users-service/.env
+    depends_on:
+      mysql-users:
+        condition: service_healthy
+    restart: always
+
+  # Post Service
+  posts-service:
+    build:
+      context: ..
+      dockerfile: ./services/posts-service/Dockerfile
+    container_name: posts-service
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./posts-service/.env
+    depends_on:
+      mysql-posts:
+        condition: service_healthy
+    restart: always
+
+  # MySQL for Users Service
+  mysql-users:
+    image: mysql:8.0
+    container_name: mysql-users
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: users_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_users_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pexample"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  # MySQL for Post Service
+  mysql-posts:
+    image: mysql:8.0
+    container_name: mysql-posts
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: posts_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_posts_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pexample"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+volumes:
+  mysql_users_data:
+    driver: local
+  mysql_posts_data:
+    driver: local

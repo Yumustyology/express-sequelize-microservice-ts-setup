@@ -1,0 +1,33 @@
+{
+  "name": "squlize-express-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "services/*"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev:users": "npm run dev --workspace=users-service",
+    "dev:posts": "npm run dev --workspace=posts-service",
+    "dev:gateway": "npm run dev --workspace=api-gateway",
+    "dev:all": "concurrently \"npm run dev:users\" \"npm run dev:posts\" \"npm run dev:gateway\"",
+    "build:all": "npm run build --workspaces",
+    "build:shared": "npm --workspace @app/shared run build",
+    "docker:up": "docker-compose up --build",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "migration:new:users": "npm run migration:new --workspace=users-service --",
+    "migration:new:posts": "npm run migration:new --workspace=posts-service --",
+    "migrate:users": "npm run migrate --workspace=users-service",
+    "migrate:posts": "npm run migrate --workspace=posts-service",
+    "migrate:undo:users": "npm run migrate:undo --workspace=users-service",
+    "migrate:undo:posts": "npm run migrate:undo --workspace=posts-service",
+     "lint": "eslint . --ext .ts",
+    "prettier": "prettier --write .",
+    "test": "jest --passWithNoTests"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
