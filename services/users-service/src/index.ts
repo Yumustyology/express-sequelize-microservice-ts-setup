@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import app from "./app.js";
+import { subscribePostEvents } from "./subscribers/post.sub.js";
 
 const PORT = Number(process.env.PORT || 4001);
 
@@ -17,13 +18,13 @@ async function main() {
       console.log("✅ Users database connected and synced successfully.");
     }
 
-    (async () => {
-      await connectRabbitMQ(process.env.RABBITMQ_URL!);
-
-      app.listen(process.env.PORT, () =>
-        console.log(`Users service running on ${process.env.PORT}`)
-      );
-    })();
+    await connectRabbitMQ(process.env.RABBITMQ_URL!);
+    subscribePostEvents();
+    
+    app.listen(process.env.PORT, () =>
+      console.log(`Users service running on ${process.env.PORT}`)
+    );
+    
   } catch (err) {
     console.error("❌ Failed to start users server:", err);
     process.exit(1);

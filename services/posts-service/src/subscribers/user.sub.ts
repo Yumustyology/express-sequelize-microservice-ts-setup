@@ -1,9 +1,34 @@
-// import { consume } from "../config/rabbitmq";
-// import UserCache from "../models/userCache"; // Or Redis table etc.
+import {
+  cacheUser,
+  deleteUserFromCache,
+  updateUserInCache,
+} from "../cache/userCache.js";
+import { consumeWithRetry } from "../config/rabbitmq.js";
 
-// export const subscribeUserEvents = async () => {
-//   await consume("user.created", async (data) => {
-//     console.log("Received user.created", data);
-//     await UserCache.create(data);
-//   });
-// };
+export async function subscribeUserEvents() {
+  const queue = "user.events";
+
+  await consumeWithRetry(queue, async (event) => {
+    switch (event.eventType) {
+      case "user.created":
+        console.log("👤 Handle user.created:", event.data);
+        cacheUser(event.data);
+        break;
+
+      case "user.deleted":
+        console.log("🗑️ Handle user.deleted:", event.data);
+        deleteUserFromCache(event.data.id);
+        break;
+
+      case "user.updated":
+        console.log("✏️ Handle user.updated:", event.data);
+        updateUserInCache(event.data);
+        break;
+
+      default:
+        console.log("⚠️ Unknown event:", event.eventType);
+    }
+  });
+
+  console.log("👂 Listening for user events...");
+}

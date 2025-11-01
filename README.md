@@ -1,5 +1,21 @@
 # Express + Sequelize + TypeScript API
 
+docker compose up -d mysql-users mysql-posts rabbitmq
+
+docker compose stop mysql-users mysql-posts rabbitmq
+
+docker compose restart mysql-users mysql-posts rabbitmq redis
+
+
+# start eveything 
+docker compose up -d
+
+# View logs (specific service)
+docker compose logs -f rabbitmq
+docker compose logs -f mysql-users
+docker compose logs -f mysql-posts
+
+
 A production-ready REST API built with Express.js, Sequelize ORM, TypeScript, and MySQL using Docker.
 
 ## 📋 Table of Contents
@@ -578,5 +594,6 @@ If you have any questions or run into issues:
 ---
 
 **Happy Coding! 🚀**"# express-sequelize-ts-setup" 
-#   e x p r e s s - s e q u e l i z e - m i c r o s e r v i c e - t s - s e t u p  
+#   e x p r e s s - s e q u e l i z e - m i c r o s e r v i c e - t s - s e t u p 
+ 
  

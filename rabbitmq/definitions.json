@@ -1,0 +1,81 @@
+{
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "users": [
+    {
+      "name": "guest",
+      "password_hash": "CQrUlZ0YV8zjYcGvGXjfU1nFZtW/2n36xU6Il/xJ8GEt",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "parameters": [],
+  "policies": [],
+  "exchanges": [
+    { "name": "user.events", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "post.events", "vhost": "/", "type": "topic", "durable": true },
+    { "name": "dlx", "vhost": "/", "type": "direct", "durable": true }
+  ],
+  "queues": [
+    {
+      "name": "user.created",
+      "vhost": "/",
+      "durable": true,
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "user.created.retry",
+        "x-message-ttl": 10000
+      }
+    },
+    {
+      "name": "user.created.retry",
+      "vhost": "/",
+      "durable": true,
+      "arguments": {
+        "x-dead-letter-exchange": "user.events",
+        "x-dead-letter-routing-key": "user.created"
+      }
+    },
+    { "name": "user.created.dlq", "vhost": "/", "durable": true },
+
+    {
+      "name": "post.created",
+      "vhost": "/",
+      "durable": true,
+      "arguments": {
+        "x-dead-letter-exchange": "dlx",
+        "x-dead-letter-routing-key": "post.created.retry",
+        "x-message-ttl": 10000
+      }
+    },
+    {
+      "name": "post.created.retry",
+      "vhost": "/",
+      "durable": true,
+      "arguments": {
+        "x-dead-letter-exchange": "post.events",
+        "x-dead-letter-routing-key": "post.created"
+      }
+    },
+    { "name": "post.created.dlq", "vhost": "/", "durable": true }
+  ],
+  "bindings": [
+    { "source": "user.events", "vhost": "/", "destination": "user.created", "destination_type": "queue", "routing_key": "user.created" },
+    { "source": "dlx", "vhost": "/", "destination": "user.created.retry", "destination_type": "queue", "routing_key": "user.created.retry" },
+    { "source": "dlx", "vhost": "/", "destination": "user.created.dlq", "destination_type": "queue", "routing_key": "user.created.dlq" },
+
+    { "source": "post.events", "vhost": "/", "destination": "post.created", "destination_type": "queue", "routing_key": "post.created" },
+    { "source": "dlx", "vhost": "/", "destination": "post.created.retry", "destination_type": "queue", "routing_key": "post.created.retry" },
+    { "source": "dlx", "vhost": "/", "destination": "post.created.dlq", "destination_type": "queue", "routing_key": "post.created.dlq" }
+  ]
+}

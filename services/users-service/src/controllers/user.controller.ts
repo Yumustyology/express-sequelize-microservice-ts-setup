@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
 import { userService } from "../services/user.service.js";
 import { ApiResponse } from "@app/shared/utils/response.js";
-import { publish } from "../config/rabbitmq.js";
+import { publishEvent } from "../config/rabbitmq.js";
 
 export async function createUserHandler(req: Request, res: Response) {
   const user: any = await userService.create(req.body);
-  await publish("user.created", {
+  await publishEvent("user.events", {
+    eventType: "user.created",
+    data: {
     id: user.id,
     name: user.name,
-    email: user.email,
+    email: user.email
+    }
   });
   return ApiResponse.created(res, "User created successfully", user);
 }

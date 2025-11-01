@@ -6,8 +6,7 @@ const router = express.Router();
 router.use(
   "/",
   createProxyMiddleware({
-    // target: "http://user-service:4001",
-    target: "http://localhost:4001/api",
+    target: process.env.USERS_SERVICE_URL || "http://localhost:4001/api",
     changeOrigin: true,
     pathRewrite: { "^/users": "" },
   })

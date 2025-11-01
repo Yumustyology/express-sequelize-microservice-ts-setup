@@ -1,9 +1,9 @@
 import { connectRabbitMQ } from "./config/rabbitmq.js";
 import dotenv from "dotenv";
+import app from "./app.js";
+import { subscribeUserEvents } from "./subscribers/user.sub.js";
 
 dotenv.config();
-
-import app from "./app.js";
 
 const PORT = Number(process.env.PORT || 4002);
 
@@ -17,13 +17,13 @@ async function main() {
       console.log("✅ Posts database connected and synced successfully.");
     }
 
-    (async () => {
-      await connectRabbitMQ(process.env.RABBITMQ_URL!);
+    await connectRabbitMQ(process.env.RABBITMQ_URL!);
+    subscribeUserEvents();
 
-      app.listen(PORT, () => {
-        console.log(`✅ Posts server running on http://localhost:${PORT}`);
-      });
-    })();
+    app.listen(PORT, () => {
+      console.log(`✅ Posts server running on http://localhost:${PORT}`);
+    });
+    
   } catch (err) {
     console.error("❌ Failed to start posts server:", err);
     process.exit(1);

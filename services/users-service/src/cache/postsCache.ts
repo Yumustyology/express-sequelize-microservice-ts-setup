@@ -18,6 +18,17 @@ export const cachePost = async (post: CachedPost) => {
   await redis.set(key, JSON.stringify(post), "EX", POST_CACHE_TTL);
 };
 
+export const updatePostInCache = async (post: CachedPost) => {
+  const key = `${POST_CACHE_PREFIX}${post.id}`;
+  const exists = await redis.exists(key);
+  if (exists) {
+    await redis.set(key, JSON.stringify(post), "EX", POST_CACHE_TTL);
+  } else {
+    cachePost(post);
+  }
+};
+
+
 // Get post from cache
 export const getPostFromCache = async (postId: string) => {
   const data = await redis.get(`${POST_CACHE_PREFIX}${postId}`);

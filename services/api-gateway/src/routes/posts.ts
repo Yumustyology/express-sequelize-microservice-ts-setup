@@ -6,8 +6,7 @@ const router = express.Router();
 router.use(
   "/",
   createProxyMiddleware({
-    // target: "http://post-service:4002",
-    target: "http://localhost:4002/api",
+    target: process.env.POST_SERVICE_URL || "http://localhost:4002/api",
     changeOrigin: true,
     pathRewrite: { "^/posts": "" },
   })
