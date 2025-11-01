@@ -6,6 +6,11 @@ docker compose stop mysql-users mysql-posts rabbitmq
 
 docker compose restart mysql-users mysql-posts rabbitmq redis
 
+-- development
+
+docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml down
+
 
 # start eveything 
 docker compose up -d
