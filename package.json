@@ -28,6 +28,9 @@
     "test": "jest --passWithNoTests"
   },
   "devDependencies": {
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.9.2",
+    "@types/winston": "^2.4.4",
     "concurrently": "^8.2.0"
   }
 }

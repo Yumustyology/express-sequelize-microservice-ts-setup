@@ -2,15 +2,26 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy root workspace manifests
+# Copy npm config
+COPY .npmrc ./
+
+# Copy root package manifests
 COPY package*.json ./
 
-# Copy required workspace folders
+# Copy workspace manifests only (cache layer)
+COPY shared/package*.json ./shared/
+COPY services/posts-service/package*.json ./services/posts-service/
+
+# Install dependencies for shared + this service only
+RUN npm install --workspace=posts-service --workspace=shared --no-audit --no-fund
+
+# Copy source code
 COPY shared ./shared
 COPY services/posts-service ./services/posts-service
 
-# Install only this and shared deps
-RUN npm install --workspace=posts-service --workspace=shared
+# Copy tsconfigs if TS used
+COPY tsconfig.json ./
+COPY services/posts-service/tsconfig.json ./services/posts-service/
 
 WORKDIR /app/services/posts-service
 

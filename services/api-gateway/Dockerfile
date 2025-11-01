@@ -2,20 +2,21 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy workspace root manifests
+COPY .npmrc ./
 COPY package*.json ./
+COPY shared/package*.json ./shared/
+COPY services/api-gateway/package*.json ./services/api-gateway/
 
-# Copy workspaces
+RUN npm config set registry https://registry.npmmirror.com \
+ && npm install --workspace=api-gateway --workspace=shared --no-audit --no-fund
+
 COPY shared ./shared
-COPY services ./services
+COPY services/api-gateway ./services/api-gateway
+COPY tsconfig.json ./
+COPY services/api-gateway/tsconfig.json ./services/api-gateway/
 
-# Install deps across all workspaces
-RUN npm install --workspaces
-
-# Build only gateway
 WORKDIR /app/services/api-gateway
 RUN npm run build
 
 EXPOSE 4000
-
 CMD ["node", "dist/index.js"]
