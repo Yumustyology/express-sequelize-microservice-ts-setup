@@ -13,8 +13,5 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "src",
-    "../../shared/middleware"
-  ]
+  "include": ["src/**/*", "../../shared/**/*"],
 }
