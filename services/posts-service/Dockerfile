@@ -21,7 +21,8 @@ COPY services/posts-service/tsconfig.json ./services/posts-service/
 
 # Build TypeScript inside the service folder
 WORKDIR /app/services/posts-service
-RUN npm run build
+# RUN npm run build
+RUN rm -rf dist && npm run build
 
 EXPOSE 4002
-CMD ["node", "dist/index.js"]
+CMD ["sh", "start.sh"]

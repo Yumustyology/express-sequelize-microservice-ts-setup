@@ -13,7 +13,11 @@ const app = express();
 
 app.use(cors());
 app.use(helmet());
-app.use(morgan("dev"));
+app.use(
+  morgan(
+    process.env.NODE_ENV === "production" ? "combined" : "dev"
+  ) as unknown as express.RequestHandler
+);
 
 app.use("/users", userProxy);
 app.use("/posts", postProxy);

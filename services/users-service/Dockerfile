@@ -21,7 +21,8 @@ COPY services/users-service/tsconfig.json ./services/users-service/
 
 # Build TypeScript inside the service folder
 WORKDIR /app/services/users-service
-RUN npm run build
+# RUN npm run build
+RUN rm -rf dist && npm run build
 
 EXPOSE 4001
-CMD ["node", "dist/index.js"]
+CMD ["sh", "start.sh"]
