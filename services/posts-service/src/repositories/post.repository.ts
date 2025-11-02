@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import { BaseRepository } from "@app/shared/repositories/base.repository.js";
 import Post from "../models/post.model.js";
 import { usersClient } from "../lib/usersClient.js";
+import { UserResponse } from "../types/user.type.js";
 
 export class PostRepository extends BaseRepository<InstanceType<typeof Post>> {
   constructor() {
@@ -10,7 +11,7 @@ export class PostRepository extends BaseRepository<InstanceType<typeof Post>> {
 
   async attachAuthor(post: any) {
     try {
-      const { data } = await usersClient.get(`/${post.userId}`);
+      const { data } = await usersClient.get<UserResponse>(`/${post.userId}`);
       return {
         ...post,
         author: {

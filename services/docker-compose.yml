@@ -1,142 +1,3 @@
-# version: "3.9"
-
-# services:
-#   # API Gateway
-#   api-gateway:
-#     build:
-#       context: ..
-#       dockerfile: ./services/api-gateway/Dockerfile
-#     container_name: api-gateway
-#     ports:
-#       - "4000:4000"
-#     env_file:
-#       - ./api-gateway/.env
-#     depends_on:
-#       - users-service
-#       - posts-service
-#     restart: always
-
-#   users-service:
-#     build:
-#       context: ..
-#       dockerfile: ./services/users-service/Dockerfile
-#     container_name: users-service
-#     ports:
-#       - "4001:4001"
-#     env_file:
-#       - ./users-service/.env
-#     depends_on:
-#       rabbitmq:
-#         condition: service_started
-#       redis:
-#         condition: service_started
-#       mysql-users:
-#         condition: service_healthy
-#     restart: always
-
-#   posts-service:
-#     build:
-#       context: ..
-#       dockerfile: ./services/posts-service/Dockerfile
-#     container_name: posts-service
-#     ports:
-#       - "4002:4002"
-#     env_file:
-#       - ./posts-service/.env
-#     depends_on:
-#       rabbitmq:
-#         condition: service_started
-#       redis:
-#         condition: service_started
-#       mysql-posts:
-#         condition: service_healthy
-#     restart: always
-
-#   mysql-users:
-#     image: mysql:8.0
-#     container_name: mysql-users
-#     restart: always
-#     environment:
-#       MYSQL_ROOT_PASSWORD: example
-#       MYSQL_DATABASE: users_db
-#       MYSQL_USER: user
-#       MYSQL_PASSWORD: password
-#     ports:
-#       - "3307:3306"
-#     volumes:
-#       - mysql_users_data:/var/lib/mysql
-#     healthcheck:
-#       test:
-#         ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pexample"]
-#       timeout: 20s
-#       retries: 10
-#       interval: 10s
-
-#   mysql-posts:
-#     image: mysql:8.0
-#     container_name: mysql-posts
-#     restart: always
-#     environment:
-#       MYSQL_ROOT_PASSWORD: example
-#       MYSQL_DATABASE: posts_db
-#       MYSQL_USER: user
-#       MYSQL_PASSWORD: password
-#     ports:
-#       - "3308:3306"
-#     volumes:
-#       - mysql_posts_data:/var/lib/mysql
-#     healthcheck:
-#       test:
-#         ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pexample"]
-#       timeout: 20s
-#       retries: 10
-#       interval: 10s
-
-#   redis:
-#     image: redis:alpine
-#     container_name: redis
-#     command: ["redis-server", "--appendonly", "yes"]
-#     ports:
-#       - "6379:6379"
-#     restart: always
-
-#   rabbitmq:
-#     image: rabbitmq:3-management
-#     container_name: rabbitmq
-#     hostname: rabbit
-#     restart: always
-#     environment:
-#       RABBITMQ_DEFAULT_USER: guest
-#       RABBITMQ_DEFAULT_PASS: guest
-#     ports:
-#       - "5672:5672"
-#       - "15672:15672"
-#     volumes:
-#       - rabbitmq_data:/var/lib/rabbitmq
-#       - ../rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
-#     command: >
-#       bash -c "
-#         rabbitmq-server &
-#         echo 'Waiting for RabbitMQ server to start...' &&
-#         while ! rabbitmqctl await_startup; do sleep 2; done;
-#         echo 'RabbitMQ started. Importing definitions...' &&
-#         rabbitmqctl import_definitions /etc/rabbitmq/definitions.json;
-#         tail -f /dev/null
-#       "
-#     healthcheck:
-#       test: ["CMD", "rabbitmq-diagnostics", "status"]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-
-# volumes:
-#   mysql_users_data:
-#   mysql_posts_data:
-#   rabbitmq_data:
-
-
-
-
 version: "3.9"
 
 services:
@@ -263,13 +124,14 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
-      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions /etc/rabbitmq/definitions.json"
+      # RABBITMQ_LOAD_DEFINITIONS: "/etc/rabbitmq/definitions.json"
+      # RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions /etc/rabbitmq/definitions.json"
     ports:
       - "5672:5672"
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-      - ../rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ../rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "status"]
       interval: 5s

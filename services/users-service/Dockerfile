@@ -2,17 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy npm config
+# Copy npm config and package manifests
 COPY .npmrc ./
-
-# Copy root package manifests
 COPY package*.json ./
-
-# Copy workspace manifests only (cache layer)
 COPY shared/package*.json ./shared/
 COPY services/users-service/package*.json ./services/users-service/
 
-# Install only needed workspace deps
+# Install dependencies only for users-service + shared
 RUN npm install --workspace=users-service --workspace=shared --no-audit --no-fund
 
 # Copy source code
@@ -23,8 +19,9 @@ COPY services/users-service ./services/users-service
 COPY tsconfig.json ./
 COPY services/users-service/tsconfig.json ./services/users-service/
 
+# Build TypeScript inside the service folder
 WORKDIR /app/services/users-service
+RUN npm run build
 
 EXPOSE 4001
-
-CMD ["npm", "start"]
+CMD ["node", "dist/index.js"]
