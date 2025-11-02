@@ -34,9 +34,9 @@ export class UserRepository extends BaseRepository<InstanceType<typeof User>> {
     const plainUser = user.get({ plain: true });
 
     // fetch posts from posts-service
-    let posts = [];
+    let posts: any[] = [];
     try {
-      const response = await postsClient.get(`/user/${id}`);
+      const response = (await postsClient.get(`/user/${id}`)) as any;
       console.log("Posts-service response:", response?.data);
       posts = response?.data?.data || [];
     } catch (err) {
